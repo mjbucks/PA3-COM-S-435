@@ -22,6 +22,7 @@ public class PositionalIndex {
             file = new File(folder + unprocessedDocs[doc]);
             docs.add(preProcess(file));
         }
+        fillDictionary();
 
     }
 
