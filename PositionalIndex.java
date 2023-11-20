@@ -3,24 +3,23 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Scanner;
+import java.util.*;
 
 public class PositionalIndex {
 
     public String folder;
     String[] unprocessedDocs;
     ArrayList<ArrayList<String>> docs;
+    int N;
 
 
     public PositionalIndex(String folder) throws FileNotFoundException {
         this.folder = folder;
         this.unprocessedDocs = allDocs();
+        this.N = unprocessedDocs.length;
         File file;
-        for (int doc = 0; doc < unprocessedDocs.length; doc++) {
-            file = new File(folder + unprocessedDocs[doc]);
+        for (String unprocessedDoc : unprocessedDocs) {
+            file = new File(folder + unprocessedDoc);
             docs.add(preProcess(file));
         }
 
@@ -35,8 +34,8 @@ public class PositionalIndex {
     public int docFrequency(String term) {
         int numTimes = 0;
 
-        for (int i = 0; i < docs.size(); i++){
-            if(docs.get(i).contains(term)) {
+        for (ArrayList<String> doc : docs) {
+            if (doc.contains(term)) {
                 numTimes++;
             }
         }
@@ -49,8 +48,7 @@ public class PositionalIndex {
     }
 
     public double weight(String t, String d) {
-
-        return 0.0;
+        return Math.pow(termFrequency(t, d), 0.5) * Math.log(N/);;
     }
 
     public double TPScore(String query, String doc) {
@@ -107,11 +105,10 @@ public class PositionalIndex {
 
     public int getIndexOfDoc(String doc) {
         for (int i = 0; i < unprocessedDocs.length; i++) {
-            if (unprocessedDocs[i] == doc) {
+            if (unprocessedDocs[i].equals(doc)) {
                 return i;
             }
         }
         return -1;
     }
-
 }
