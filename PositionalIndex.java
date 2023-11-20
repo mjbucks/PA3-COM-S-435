@@ -12,6 +12,8 @@ public class PositionalIndex {
     ArrayList<ArrayList<String>> docs;
     int N;
 
+    Dictionary<String, ArrayList<String>> dictionary;
+
 
     public PositionalIndex(String folder) throws FileNotFoundException {
         this.folder = folder;
@@ -22,6 +24,7 @@ public class PositionalIndex {
             file = new File(folder + unprocessedDoc);
             docs.add(preProcess(file));
         }
+        fillDictionary();
 
     }
 
@@ -43,6 +46,20 @@ public class PositionalIndex {
     }
 
     public String postingsList(String t) {
+        if (dictionary.get(t) == null) {
+            return "";
+        }
+        ArrayList<String> postingsForTerm = dictionary.get(t);
+        String result = "[";
+
+        String docName = "";
+        int i, j, index;
+        for (i = 0; i < postingsForTerm.size(); i++){
+            if (docs.get(i).contains(t)){
+                docName = unprocessedDocs[i];
+                ArrayList<Integer> indeces = new ArrayList<Integer>();
+                result = result + "<";
+                result = result + docName + ":";
 
         return null;
     }
@@ -111,4 +128,23 @@ public class PositionalIndex {
         }
         return -1;
     }
+
+    public void fillDictionary() throws FileNotFoundException {
+        ArrayList<String> termDocuments;
+        for(int i = 0; i < docs.size(); i++){
+            ArrayList<String> currTerms = docs.get(i);
+            for (String currTerm : currTerms) {
+                if ((dictionary.get(currTerm) == null)) {
+                    termDocuments = new ArrayList<String>();
+                    termDocuments.add(unprocessedDocs[i]);
+                    dictionary.put(currTerm, termDocuments);
+                } else {
+                    termDocuments = dictionary.get(currTerm);
+                    termDocuments.add(unprocessedDocs[i]);
+                    dictionary.put(currTerm, termDocuments);
+                }
+            }
+        }
+    }
+
 }
