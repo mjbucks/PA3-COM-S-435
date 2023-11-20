@@ -3,16 +3,15 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Scanner;
+import java.util.*;
 
 public class PositionalIndex {
 
     public String folder;
     String[] unprocessedDocs;
     ArrayList<ArrayList<String>> docs;
+
+    Dictionary<String, ArrayList<String>> dictionary;
 
 
     public PositionalIndex(String folder) throws FileNotFoundException {
@@ -44,8 +43,44 @@ public class PositionalIndex {
     }
 
     public String postingsList(String t) {
+        if (dictionary.get(t) == null) {
+            return "";
+        }
+        ArrayList<String> postingsForTerm = dictionary.get(t);
+        String result = "[";
 
-        return null;
+        String docName = "";
+        int i, j, index;
+        for (i = 0; i < postingsForTerm.size(); i++){
+            if (docs.get(i).contains(t)){
+                docName = unprocessedDocs[i];
+                ArrayList<Integer> indeces = new ArrayList<Integer>();
+                result = result + "<";
+                result = result + docName + ":";
+
+                for(j = 0; j < docs.get(getIndexOfDoc(postingsForTerm.get(i))).size(); j++){
+                    if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).get(j).equals(t)){
+                        indeces.add(j);
+                    }
+                }
+                for(index = 0; index < indeces.size(); index++){
+                    if (index != indeces.size()-1){
+                        result = result + indeces.get(index).toString() + ",";
+                    }
+                    else {
+                        result = result + indeces.get(index).toString();
+                    }
+                }
+                if(i != postingsForTerm.size()-1){
+                    result = result + ">" + ",";
+                } else{
+                    result = result + ">";
+                }
+            }
+        }
+        result = result + "]";
+
+        return result;
     }
 
     public double weight(String t, String d) {
@@ -112,6 +147,24 @@ public class PositionalIndex {
             }
         }
         return -1;
+    }
+
+    public void fillDictionary() throws FileNotFoundException {
+        ArrayList<String> termDocuments;
+        for(int i = 0; i < docs.size(); i++){
+            ArrayList<String> currTerms = docs.get(i);
+            for (String currTerm : currTerms) {
+                if ((dictionary.get(currTerm) == null)) {
+                    termDocuments = new ArrayList<String>();
+                    termDocuments.add(unprocessedDocs[i]);
+                    dictionary.put(currTerm, termDocuments);
+                } else {
+                    termDocuments = dictionary.get(currTerm);
+                    termDocuments.add(unprocessedDocs[i]);
+                    dictionary.put(currTerm, termDocuments);
+                }
+            }
+        }
     }
 
 }
