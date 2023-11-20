@@ -10,13 +10,14 @@ public class PositionalIndex {
     public String folder;
     String[] unprocessedDocs;
     ArrayList<ArrayList<String>> docs;
-
     Dictionary<String, ArrayList<String>> dictionary;
+    int N;
 
 
     public PositionalIndex(String folder) throws FileNotFoundException {
         this.folder = folder;
         this.unprocessedDocs = allDocs();
+        this.N = unprocessedDocs.length;
         File file;
         for (int doc = 0; doc < unprocessedDocs.length; doc++) {
             file = new File(folder + unprocessedDocs[doc]);
@@ -86,7 +87,7 @@ public class PositionalIndex {
 
     public double weight(String t, String d) {
 
-        return 0.0;
+        return Math.pow(termFrequency(t, d), 0.5) * Math.log((double) N /dictionary.get(t).size());
     }
 
     public double TPScore(String query, String doc) {
