@@ -19,10 +19,47 @@ public class PositionalIndex {
         this.unprocessedDocs = allDocs();
         this.N = unprocessedDocs.length;
         File file;
+        docs = new ArrayList<ArrayList<String>>();
         for (int doc = 0; doc < unprocessedDocs.length; doc++) {
-            file = new File(folder + unprocessedDocs[doc]);
+            file = new File(folder + "\\" + unprocessedDocs[doc]);
             docs.add(preProcess(file));
         }
+        dictionary = new Dictionary<String, ArrayList<String>>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public Enumeration<String> keys() {
+                return null;
+            }
+
+            @Override
+            public Enumeration<ArrayList<String>> elements() {
+                return null;
+            }
+
+            @Override
+            public ArrayList<String> get(Object key) {
+                return null;
+            }
+
+            @Override
+            public ArrayList<String> put(String key, ArrayList<String> value) {
+                return null;
+            }
+
+            @Override
+            public ArrayList<String> remove(Object key) {
+                return null;
+            }
+        };
         fillDictionary();
 
     }
