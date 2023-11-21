@@ -86,7 +86,6 @@ public class PositionalIndex {
     }
 
     public double weight(String t, String d) {
-
         return Math.pow(termFrequency(t, d), 0.5) * Math.log((double) N /dictionary.get(t).size());
     }
 
