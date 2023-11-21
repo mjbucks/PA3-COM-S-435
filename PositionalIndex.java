@@ -24,42 +24,7 @@ public class PositionalIndex {
             file = new File(folder + "\\" + unprocessedDocs[doc]);
             docs.add(preProcess(file));
         }
-        dictionary = new Dictionary<String, ArrayList<String>>() {
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public Enumeration<String> keys() {
-                return null;
-            }
-
-            @Override
-            public Enumeration<ArrayList<String>> elements() {
-                return null;
-            }
-
-            @Override
-            public ArrayList<String> get(Object key) {
-                return null;
-            }
-
-            @Override
-            public ArrayList<String> put(String key, ArrayList<String> value) {
-                return null;
-            }
-
-            @Override
-            public ArrayList<String> remove(Object key) {
-                return null;
-            }
-        };
+        dictionary = new Hashtable<String, ArrayList<String>>();
         fillDictionary();
 
     }
@@ -89,10 +54,14 @@ public class PositionalIndex {
         String result = "[";
 
         String docName = "";
-        int i, j, index;
+        int i, j, index, docIndex;
+        System.out.println(postingsForTerm.size());
+        System.out.println(docs.size());
+
         for (i = 0; i < postingsForTerm.size(); i++){
-            if (docs.get(i).contains(t)){
-                docName = unprocessedDocs[i];
+            if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).contains(t)){
+                docIndex = getIndexOfDoc(postingsForTerm.get(i));
+                docName = unprocessedDocs[docIndex];
                 ArrayList<Integer> indeces = new ArrayList<Integer>();
                 result = result + "<";
                 result = result + docName + ":";
@@ -149,7 +118,7 @@ public class PositionalIndex {
         while (scan.hasNext()){
             String word = scan.next();
             word = word.toLowerCase();
-            word = word.replaceAll("[,\\[\\]\"\'{}:;()\\?]", "");
+            word = word.replaceAll("[.,\\[\\]\"\'{}:;()\\?]", "");
             if (!word.equals("are") && !word.equals("the") && !word.equals("is")){
                 document.add(word);
             }
@@ -198,7 +167,9 @@ public class PositionalIndex {
                     dictionary.put(currTerm, termDocuments);
                 } else {
                     termDocuments = dictionary.get(currTerm);
-                    termDocuments.add(unprocessedDocs[i]);
+                    if (!termDocuments.contains(unprocessedDocs[i])){
+                        termDocuments.add(unprocessedDocs[i]);
+                    }
                     dictionary.put(currTerm, termDocuments);
                 }
             }
