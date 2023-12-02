@@ -12,6 +12,7 @@ public class PositionalIndex {
     ArrayList<ArrayList<String>> docs;
     Dictionary<String, Integer> dictionary;
     int N;
+    Hashtable<String, Hashtable<String, ArrayList<Integer>>> postings;
 
 
     public PositionalIndex(String folder) throws FileNotFoundException {
@@ -24,9 +25,32 @@ public class PositionalIndex {
             file = new File(folder + "\\" + unprocessedDocs[doc]);
             docs.add(preProcess(file));
         }
+        postings = new Hashtable<String, Hashtable<String, ArrayList<Integer>>>();
+        createPostings();
+
         dictionary = new Hashtable<String, Integer>();
         fillDictionary();
 
+    }
+
+    public void createPostings() {
+        int docIndex, termIndex;
+        String term, docName;
+        for (docIndex = 0; docIndex < docs.size(); docIndex++) {
+            docName = unprocessedDocs[docIndex];
+
+            for (termIndex = 0; termIndex < docs.get(docIndex).size(); termIndex++){
+                term = docs.get(docIndex).get(termIndex);
+                if (postings.get(term) == null){
+                    postings.put(term, new Hashtable<>());
+                    postings.get(term).put(docName, new ArrayList<Integer>());
+                }
+                else if(postings.get(term).get(docName) == null) {
+                    postings.get(term).put(docName, new ArrayList<Integer>());
+                }
+                postings.get(term).get(docName).add(termIndex);
+            }
+        }
     }
 
     public int termFrequency(String term, String doc) {
@@ -47,62 +71,95 @@ public class PositionalIndex {
     }
 
     public String postingsList(String t) {
-        if (dictionary.get(t) == null) {
-            return "";
-        }
-        int termDocFreq = 0;
-
-        for (int i = 0; i < docs.size(); i++) {
-            if (termDocFreq == dictionary.get(t)) {
-                break;
-            }
-
-
-
-
-        }
-
-
-
-        ArrayList<String> postingsForTerm = dictionary.get(t);
         StringBuilder result = new StringBuilder("[");
+        String docName;
+        Enumeration<String> e = postings.keys();
+        int termIndex;
 
-        String docName = "";
-        int i, j, index, docIndex;
-        System.out.println(postingsForTerm.size());
-        System.out.println(docs.size());
-
-        for (i = 0; i < postingsForTerm.size(); i++){
-            if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).contains(t)){
-                docIndex = getIndexOfDoc(postingsForTerm.get(i));
-                docName = unprocessedDocs[docIndex];
-                ArrayList<Integer> indeces = new ArrayList<Integer>();
-                result.append("<");
-                result.append(docName).append(":");
-
-                for(j = 0; j < docs.get(getIndexOfDoc(postingsForTerm.get(i))).size(); j++){
-                    if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).get(j).equals(t)){
-                        indeces.add(j);
-                    }
-                }
-                for(index = 0; index < indeces.size(); index++){
-                    if (index != indeces.size()-1){
-                        result.append(indeces.get(index).toString()).append(",");
-                    }
-                    else {
-                        result.append(indeces.get(index).toString());
-                    }
-                }
-                if(i != postingsForTerm.size()-1){
-                    result.append(">").append(",");
-                } else{
-                    result.append(">");
-                }
+        while (e.hasMoreElements()) {
+            docName = e.nextElement();
+            result.append("<").append(docName).append(" : ");
+            for (termIndex = 0; termIndex < postings.get(t).get(docName).size() - 1; termIndex++) {
+                result.append(postings.get(t).get(docName).get(termIndex)).append(", ");
             }
+            result.append(postings.get(t).get(docName).get(termIndex + 1)).append(">, ");
         }
+        result.deleteCharAt(result.lastIndexOf(","));
         result.append("]");
 
         return result.toString();
+
+//        if (dictionary.get(t) == null) {
+//            return "";
+//        }
+//
+//        int termDocFreq = 0;
+//        int termIndex;
+//        String docName;
+//        StringBuilder result = new StringBuilder("[");
+//
+//        for (int docIndex = 0; docIndex < docs.size(); docIndex++) {
+//            if (termDocFreq == dictionary.get(t)) {
+//                break;
+//            }
+//
+//            if (docs.get(docIndex).contains(t)) {
+//                docName = unprocessedDocs[docIndex];
+//
+//                termDocFreq++;
+//            }
+//
+//
+//
+//        }
+//
+//
+//
+////        ArrayList<String> postingsForTerm = dictionary.get(t);
+//
+//        String docName = "";
+//        //int i, j, index, docIndex;
+//        System.out.println(postingsForTerm.size());
+//        System.out.println(docs.size());
+//
+//        for (i = 0; i < postingsForTerm.size(); i++){
+//            if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).contains(t)){
+//                docIndex = getIndexOfDoc(postingsForTerm.get(i));
+//                docName = unprocessedDocs[docIndex];
+//                ArrayList<Integer> indeces = new ArrayList<Integer>();
+//                result.append("<");
+//                result.append(docName).append(":");
+//
+//                for(j = 0; j < docs.get(getIndexOfDoc(postingsForTerm.get(i))).size(); j++){
+//                    if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).get(j).equals(t)){
+//                        indeces.add(j);
+//                    }
+//                }
+//                for(index = 0; index < indeces.size(); index++){
+//                    if (index != indeces.size()-1){
+//                        result.append(indeces.get(index).toString()).append(",");
+//                    }
+//                    else {
+//                        result.append(indeces.get(index).toString());
+//                    }
+//                }
+//                if(i != postingsForTerm.size()-1){
+//                    result.append(">").append(",");
+//                } else{
+//                    result.append(">");
+//                }
+//            }
+//        }
+//        result.append("]");
+//
+//        return result.toString();
+    }
+
+    Hashtable<String, ArrayList<String>> postings (String t) {
+        Hashtable<String, ArrayList<String>> posting = new Hashtable<>();
+
+
+        return posting;
     }
 
     public double weight(String t, String d) {
@@ -171,21 +228,11 @@ public class PositionalIndex {
     }
 
     public void fillDictionary() throws FileNotFoundException {
-        Integer frequency;
-        Set<String> currTerms;
-
-        ArrayList<String> termDocuments;
-        for (ArrayList<String> doc : docs) {
-            currTerms = new HashSet<>(doc);
-            for (String currTerm : currTerms) {
-                frequency = dictionary.get(currTerm);
-                if (frequency == null) {
-                    dictionary.put(currTerm, 1);
-                }
-                else {
-                    dictionary.put(currTerm, frequency + 1);
-                }
-            }
+        String key;
+        Enumeration<String> e = postings.keys();
+        while (e.hasMoreElements()) {
+            key = e.nextElement();
+            dictionary.put(key, postings.get(key).size());
         }
     }
 

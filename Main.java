@@ -17,7 +17,7 @@ public class Main {
 //            System.out.println(key + ": " + pos.dictionary.get(key).toString());
 //        }
 
-        System.out.println(pos.postingsList("team"));
+        System.out.println(pos.postingsList("had"));
 
 
 
