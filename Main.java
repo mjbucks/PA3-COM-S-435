@@ -5,7 +5,6 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
 //        String folder = "C:\\Users\\Maxwe\\Downloads\\testFiles\\testFiles";
-
         PositionalIndex pos = new PositionalIndex(folder);
 
 //        Enumeration<String> keys = pos.dictionary.keys();

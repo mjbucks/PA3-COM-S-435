@@ -10,7 +10,7 @@ public class PositionalIndex {
     public String folder;
     String[] unprocessedDocs;
     ArrayList<ArrayList<String>> docs;
-    Dictionary<String, ArrayList<String>> dictionary;
+    Dictionary<String, Integer> dictionary;
     int N;
 
 
@@ -24,7 +24,7 @@ public class PositionalIndex {
             file = new File(folder + "\\" + unprocessedDocs[doc]);
             docs.add(preProcess(file));
         }
-        dictionary = new Hashtable<String, ArrayList<String>>();
+        dictionary = new Hashtable<String, Integer>();
         fillDictionary();
 
     }
@@ -38,8 +38,8 @@ public class PositionalIndex {
     public int docFrequency(String term) {
         int numTimes = 0;
 
-        for (int i = 0; i < docs.size(); i++){
-            if(docs.get(i).contains(term)) {
+        for (ArrayList<String> doc : docs) {
+            if (doc.contains(term)) {
                 numTimes++;
             }
         }
@@ -50,8 +50,22 @@ public class PositionalIndex {
         if (dictionary.get(t) == null) {
             return "";
         }
+        int termDocFreq = 0;
+
+        for (int i = 0; i < docs.size(); i++) {
+            if (termDocFreq == dictionary.get(t)) {
+                break;
+            }
+
+
+
+
+        }
+
+
+
         ArrayList<String> postingsForTerm = dictionary.get(t);
-        String result = "[";
+        StringBuilder result = new StringBuilder("[");
 
         String docName = "";
         int i, j, index, docIndex;
@@ -63,8 +77,8 @@ public class PositionalIndex {
                 docIndex = getIndexOfDoc(postingsForTerm.get(i));
                 docName = unprocessedDocs[docIndex];
                 ArrayList<Integer> indeces = new ArrayList<Integer>();
-                result = result + "<";
-                result = result + docName + ":";
+                result.append("<");
+                result.append(docName).append(":");
 
                 for(j = 0; j < docs.get(getIndexOfDoc(postingsForTerm.get(i))).size(); j++){
                     if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).get(j).equals(t)){
@@ -73,26 +87,26 @@ public class PositionalIndex {
                 }
                 for(index = 0; index < indeces.size(); index++){
                     if (index != indeces.size()-1){
-                        result = result + indeces.get(index).toString() + ",";
+                        result.append(indeces.get(index).toString()).append(",");
                     }
                     else {
-                        result = result + indeces.get(index).toString();
+                        result.append(indeces.get(index).toString());
                     }
                 }
                 if(i != postingsForTerm.size()-1){
-                    result = result + ">" + ",";
+                    result.append(">").append(",");
                 } else{
-                    result = result + ">";
+                    result.append(">");
                 }
             }
         }
-        result = result + "]";
+        result.append("]");
 
-        return result;
+        return result.toString();
     }
 
     public double weight(String t, String d) {
-        return Math.pow(termFrequency(t, d), 0.5) * Math.log((double) N /dictionary.get(t).size());
+        return Math.pow(termFrequency(t, d), 0.5) * Math.log((double) N /dictionary.get(t));
     }
 
     public double TPScore(String query, String doc) {
@@ -157,20 +171,19 @@ public class PositionalIndex {
     }
 
     public void fillDictionary() throws FileNotFoundException {
+        Integer frequency;
+        Set<String> currTerms;
+
         ArrayList<String> termDocuments;
-        for(int i = 0; i < docs.size(); i++){
-            ArrayList<String> currTerms = docs.get(i);
+        for (ArrayList<String> doc : docs) {
+            currTerms = new HashSet<>(doc);
             for (String currTerm : currTerms) {
-                if ((dictionary.get(currTerm) == null)) {
-                    termDocuments = new ArrayList<String>();
-                    termDocuments.add(unprocessedDocs[i]);
-                    dictionary.put(currTerm, termDocuments);
-                } else {
-                    termDocuments = dictionary.get(currTerm);
-                    if (!termDocuments.contains(unprocessedDocs[i])){
-                        termDocuments.add(unprocessedDocs[i]);
-                    }
-                    dictionary.put(currTerm, termDocuments);
+                frequency = dictionary.get(currTerm);
+                if (frequency == null) {
+                    dictionary.put(currTerm, 1);
+                }
+                else {
+                    dictionary.put(currTerm, frequency + 1);
                 }
             }
         }
