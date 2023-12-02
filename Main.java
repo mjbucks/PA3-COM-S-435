@@ -3,7 +3,9 @@ import java.util.Enumeration;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        PositionalIndex pos = new PositionalIndex("C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles");
+        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
+//        String folder = "C:\\Users\\Maxwe\\Downloads\\testFiles\\testFiles";
+        PositionalIndex pos = new PositionalIndex(folder);
 
 //        Enumeration<String> keys = pos.dictionary.keys();
 // iterate over the keys
@@ -15,7 +17,7 @@ public class Main {
 //            System.out.println(key + ": " + pos.dictionary.get(key).toString());
 //        }
 
-        System.out.println(pos.dictionary);
+        System.out.println(pos.postingsList("had"));
 
 
 
