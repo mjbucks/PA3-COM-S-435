@@ -96,8 +96,19 @@ public class PositionalIndex {
     }
 
     public double TPScore(String query, String doc) {
+        String[] qWords = query.split(" ");
 
-        return 0.0;
+        if(qWords.length == 0){
+            return 0.0;
+        }
+        
+        double sum = 0;
+        
+        for(int l = 0; l < qWords.length - 1; l++){
+            sum = sum + distd(qWords[l], qWords[l+1], doc);
+        }
+
+        return ((double) qWords.length)/sum;
     }
 
     public double VSScore(String query, String doc) {
@@ -175,5 +186,40 @@ public class PositionalIndex {
             }
         }
     }
+
+
+
+
+    // This method returns the distance between two terms in a document[^1^][1]
+    public double distd(String term1, String term2, String doc) {
+        int index = getIndexOfDoc(doc);
+        ArrayList<String> document = docs.get(index);
+        int pos1 = -1, pos2 = -1;
+        double minDist = Double.MAX_VALUE;
+
+        for (int i = 0; i < document.size(); i++) {
+            if (document.get(i).equals(term1)) {
+                pos1 = i;
+            }
+            if (document.get(i).equals(term2)) {
+                pos2 = i;
+            }
+            if (pos1 != -1 && pos2 != -1 && pos1 <= pos2) {
+                minDist = Math.min(minDist, pos2 - pos1);
+            }
+        }
+        if (pos1 == -1 || pos2 == -1) {
+            return 17;
+        }
+        return Math.min(minDist, 17);
+    }
+
+
+    // Please note that this is a simple implementation and may not cover all edge cases.
+    // For example, it does not handle cases where the terms are not found in the document, or where the document is empty.
+    // You may need to add additional error checking depending on your specific requirements.
+    // Also, this method assumes that the document is a single string where words are separated by spaces.
+    // If your document structure is different, you may need to adjust the method accordingly.
+
 
 }
