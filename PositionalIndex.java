@@ -73,93 +73,22 @@ public class PositionalIndex {
     public String postingsList(String t) {
         StringBuilder result = new StringBuilder("[");
         String docName;
-        Enumeration<String> e = postings.keys();
+        Enumeration<String> e = postings.get(t).keys();
         int termIndex;
 
         while (e.hasMoreElements()) {
             docName = e.nextElement();
-            result.append("<").append(docName).append(" : ");
-            for (termIndex = 0; termIndex < postings.get(t).get(docName).size() - 1; termIndex++) {
-                result.append(postings.get(t).get(docName).get(termIndex)).append(", ");
+            result.append("<").append(docName).append(":");
+            for (termIndex = 0; termIndex < postings.get(t).get(docName).size(); termIndex++) {
+                result.append(postings.get(t).get(docName).get(termIndex)).append(",");
             }
-            result.append(postings.get(t).get(docName).get(termIndex + 1)).append(">, ");
+            result.deleteCharAt(result.lastIndexOf(","));
+            result.append(">,");
         }
         result.deleteCharAt(result.lastIndexOf(","));
         result.append("]");
 
         return result.toString();
-
-//        if (dictionary.get(t) == null) {
-//            return "";
-//        }
-//
-//        int termDocFreq = 0;
-//        int termIndex;
-//        String docName;
-//        StringBuilder result = new StringBuilder("[");
-//
-//        for (int docIndex = 0; docIndex < docs.size(); docIndex++) {
-//            if (termDocFreq == dictionary.get(t)) {
-//                break;
-//            }
-//
-//            if (docs.get(docIndex).contains(t)) {
-//                docName = unprocessedDocs[docIndex];
-//
-//                termDocFreq++;
-//            }
-//
-//
-//
-//        }
-//
-//
-//
-////        ArrayList<String> postingsForTerm = dictionary.get(t);
-//
-//        String docName = "";
-//        //int i, j, index, docIndex;
-//        System.out.println(postingsForTerm.size());
-//        System.out.println(docs.size());
-//
-//        for (i = 0; i < postingsForTerm.size(); i++){
-//            if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).contains(t)){
-//                docIndex = getIndexOfDoc(postingsForTerm.get(i));
-//                docName = unprocessedDocs[docIndex];
-//                ArrayList<Integer> indeces = new ArrayList<Integer>();
-//                result.append("<");
-//                result.append(docName).append(":");
-//
-//                for(j = 0; j < docs.get(getIndexOfDoc(postingsForTerm.get(i))).size(); j++){
-//                    if (docs.get(getIndexOfDoc(postingsForTerm.get(i))).get(j).equals(t)){
-//                        indeces.add(j);
-//                    }
-//                }
-//                for(index = 0; index < indeces.size(); index++){
-//                    if (index != indeces.size()-1){
-//                        result.append(indeces.get(index).toString()).append(",");
-//                    }
-//                    else {
-//                        result.append(indeces.get(index).toString());
-//                    }
-//                }
-//                if(i != postingsForTerm.size()-1){
-//                    result.append(">").append(",");
-//                } else{
-//                    result.append(">");
-//                }
-//            }
-//        }
-//        result.append("]");
-//
-//        return result.toString();
-    }
-
-    Hashtable<String, ArrayList<String>> postings (String t) {
-        Hashtable<String, ArrayList<String>> posting = new Hashtable<>();
-
-
-        return posting;
     }
 
     public double weight(String t, String d) {
@@ -220,7 +149,7 @@ public class PositionalIndex {
 
     public int getIndexOfDoc(String doc) {
         for (int i = 0; i < unprocessedDocs.length; i++) {
-            if (unprocessedDocs[i] == doc) {
+            if (unprocessedDocs[i].equals(doc)) {
                 return i;
             }
         }
