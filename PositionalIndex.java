@@ -94,7 +94,10 @@ public class PositionalIndex {
     }
 
     public double weight(String t, String d) {
-        return Math.pow(termFrequency(t, d), 0.5) * Math.log((double) N /dictionary.get(t));
+        if (postings.get(t).get(d) == null) {
+            return 0;
+        }
+        return Math.sqrt(postings.get(t).get(d).size()) * Math.log((double) N /dictionary.get(t));
     }
 
     public double TPScore(String query, String doc) {
@@ -103,6 +106,26 @@ public class PositionalIndex {
     }
 
     public double VSScore(String query, String doc) {
+        ArrayList<Double> queryVector = new ArrayList<>();
+        ArrayList<Double> docVector = new ArrayList<>();
+        Set<String> terms = postings.keySet();
+        double dotProduct = 0;
+        double magnitudeA = 0;
+        double magnitudeB = 0;
+
+        for (String term : terms) {
+            queryVector.add((double) termFrequency(term, query));
+            docVector.add(weight(term, doc));
+        }
+
+        for (int i = 0; i < terms.size(); i++) {
+            dotProduct += queryVector.get(i) + docVector.get(i);
+            magnitudeA += Math.pow(queryVector.get(i), 2);
+            magnitudeB += Math.pow(docVector.get(i), 2);
+        }
+
+        magnitudeA = Math.sqrt(magnitudeA);
+        magnitudeB = Math.sqrt(magnitudeB);
 
         return 0.0;
     }
