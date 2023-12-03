@@ -54,9 +54,11 @@ public class PositionalIndex {
     }
 
     public int termFrequency(String term, String doc) {
-        int index = getIndexOfDoc(doc);
+//        int index = getIndexOfDoc(doc);
+        ArrayList<String> words = new ArrayList<>(Arrays.asList(doc.split(" ")));
 
-        return Collections.frequency(docs.get(index), term);
+        System.out.println(words);
+        return Collections.frequency(words, term);
     }
 
     public int docFrequency(String term) {
