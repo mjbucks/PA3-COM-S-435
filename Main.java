@@ -17,9 +17,7 @@ public class Main {
 //            System.out.println(key + ": " + pos.dictionary.get(key).toString());
 //        }
 
-        System.out.println(pos.postingsList("had"));
-
-
+        System.out.println(pos.VSScore("had",  "1903_Washington_Senators_season.txt"));
 
     }
 
