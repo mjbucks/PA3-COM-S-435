@@ -37,6 +37,7 @@ public class PositionalIndex {
     public void createPostings() {
         int docIndex, termIndex;
         String term, docName;
+
         for (docIndex = 0; docIndex < docs.size(); docIndex++) {
             docName = unprocessedDocs[docIndex];
 
@@ -58,17 +59,6 @@ public class PositionalIndex {
         doc = doc.toLowerCase();
         ArrayList<String> words = new ArrayList<>(Arrays.asList(doc.split(" ")));
         return Collections.frequency(words, term);
-    }
-
-    public int docFrequency(String term) {
-        int numTimes = 0;
-
-        for (ArrayList<String> doc : docs) {
-            if (doc.contains(term)) {
-                numTimes++;
-            }
-        }
-        return numTimes;
     }
 
     public String postingsList(String t) {
