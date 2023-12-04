@@ -54,10 +54,8 @@ public class PositionalIndex {
     }
 
     public int termFrequency(String term, String doc) {
-//        int index = getIndexOfDoc(doc);
+        doc = doc.toLowerCase();
         ArrayList<String> words = new ArrayList<>(Arrays.asList(doc.split(" ")));
-
-        System.out.println(words);
         return Collections.frequency(words, term);
     }
 
@@ -108,7 +106,8 @@ public class PositionalIndex {
     public double VSScore(String query, String doc) {
         ArrayList<Double> queryVector = new ArrayList<>();
         ArrayList<Double> docVector = new ArrayList<>();
-        Set<String> terms = postings.keySet();
+        Set<String> termsSet = postings.keySet();
+        ArrayList<String> terms = new ArrayList<>(termsSet);
         double dotProduct = 0;
         double magnitudeA = 0;
         double magnitudeB = 0;
@@ -127,7 +126,7 @@ public class PositionalIndex {
         magnitudeA = Math.sqrt(magnitudeA);
         magnitudeB = Math.sqrt(magnitudeB);
 
-        return 0.0;
+        return dotProduct / (magnitudeA * magnitudeB);
     }
 
     public double Relevance(String query, String doc) {
