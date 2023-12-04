@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -100,7 +101,7 @@ public class PositionalIndex {
 
     public double TPScore(String query, String doc) {
 
-        return 0.0;
+        return 1;
     }
 
     public double VSScore(String query, String doc) {
@@ -130,8 +131,36 @@ public class PositionalIndex {
     }
 
     public double Relevance(String query, String doc) {
+        return 0.6 * TPScore(query, doc) + 0.4 * VSScore(query, doc);
+    }
 
-        return 0.0;
+    ArrayList<String> topkDocs(String query, int k) {
+        String doc;
+        HashMap<String, Double> docs = new HashMap<>();
+
+        for (int docIndex = 0; docIndex < unprocessedDocs.length; docIndex++) {
+            doc = unprocessedDocs[docIndex];
+            docs.put(doc, Relevance(query, doc));
+        }
+
+        PriorityQueue<Map.Entry<String, Double>> queue = new PriorityQueue<>(
+                Comparator.comparingDouble(Map.Entry::getValue)
+        );
+
+        for (Map.Entry<String, Double> entry : docs.entrySet()) {
+            queue.offer(entry);
+            if (queue.size() > k) {
+                queue.poll();  // remove the document with the smallest relevance score
+            }
+        }
+
+        ArrayList<String> topKDocs = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            topKDocs.add(queue.poll().getKey());
+        }
+        Collections.reverse(topKDocs);
+
+        return topKDocs;
     }
 
     public ArrayList<String> preProcess(File file) throws FileNotFoundException {
