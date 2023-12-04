@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
 //        String folder = "C:\\Users\\Maxwe\\Downloads\\testFiles\\testFiles";
-        PositionalIndex pos = new PositionalIndex(folder);
+        //PositionalIndex pos = new PositionalIndex(folder);
 //        System.out.println(pos.dictionary);
 
 //        Enumeration<String> keys = pos.dictionary.keys();
@@ -42,16 +42,17 @@ public class Main {
         int k = 10;
         ArrayList<String> topK;
         String doc;
+        QueryProcessor qp = new QueryProcessor(folder);
 
         for (String q : queries) {
             System.out.println("Query: " + q);
 
-            topK = pos.topkDocs(q, k);
+            topK = qp.topkDocs(q, k);
             for (int d = 0; d < topK.size(); d++) {
                 doc = topK.get(d);
                 System.out.println((d + 1) + ") " + doc);
-                System.out.println("TPScore: " + pos.TPScore(q, doc) + ", VSScore: " + pos.VSScore(q, doc) +
-                        ", Relevance Score: " + pos.Relevance(q, doc));
+                System.out.println("TPScore: " + qp.pos.TPScore(q, doc) + ", VSScore: " + qp.pos.VSScore(q, doc) +
+                        ", Relevance Score: " + qp.pos.Relevance(q, doc));
             }
             System.out.println("-----------------------------------------------------------------------------\n");
         }
