@@ -6,7 +6,6 @@ public class QueryProcessor {
     PositionalIndex pos;
     public QueryProcessor(String folder) throws FileNotFoundException {
         pos = new PositionalIndex(folder);
-
     }
 
     ArrayList<String> topkDocs(String query, int k) {
