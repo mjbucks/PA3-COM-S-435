@@ -124,7 +124,6 @@ public class PositionalIndex {
         return 0.6 * TPScore(query, doc) + 0.4 * VSScore(query, doc);
     }
 
-
     public ArrayList<String> preProcess(File file) throws FileNotFoundException {
         ArrayList<String> document = new ArrayList<String>();
 
