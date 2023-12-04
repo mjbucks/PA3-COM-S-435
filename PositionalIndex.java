@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,6 +37,7 @@ public class PositionalIndex {
     public void createPostings() {
         int docIndex, termIndex;
         String term, docName;
+
         for (docIndex = 0; docIndex < docs.size(); docIndex++) {
             docName = unprocessedDocs[docIndex];
 
@@ -54,20 +56,9 @@ public class PositionalIndex {
     }
 
     public int termFrequency(String term, String doc) {
-        int index = getIndexOfDoc(doc);
-
-        return Collections.frequency(docs.get(index), term);
-    }
-
-    public int docFrequency(String term) {
-        int numTimes = 0;
-
-        for (ArrayList<String> doc : docs) {
-            if (doc.contains(term)) {
-                numTimes++;
-            }
-        }
-        return numTimes;
+        doc = doc.toLowerCase();
+        ArrayList<String> words = new ArrayList<>(Arrays.asList(doc.split(" ")));
+        return Collections.frequency(words, term);
     }
 
     public String postingsList(String t) {
@@ -92,7 +83,10 @@ public class PositionalIndex {
     }
 
     public double weight(String t, String d) {
-        return Math.pow(termFrequency(t, d), 0.5) * Math.log((double) N /dictionary.get(t));
+        if (postings.get(t).get(d) == null) {
+            return 0;
+        }
+        return Math.sqrt(postings.get(t).get(d).size()) * Math.log((double) N /dictionary.get(t));
     }
 
     public double TPScore(String query, String doc) {
@@ -112,13 +106,62 @@ public class PositionalIndex {
     }
 
     public double VSScore(String query, String doc) {
+        ArrayList<Double> queryVector = new ArrayList<>();
+        ArrayList<Double> docVector = new ArrayList<>();
+        Set<String> termsSet = postings.keySet();
+        ArrayList<String> terms = new ArrayList<>(termsSet);
+        double dotProduct = 0;
+        double magnitudeA = 0;
+        double magnitudeB = 0;
 
-        return 0.0;
+        for (String term : terms) {
+            queryVector.add((double) termFrequency(term, query));
+            docVector.add(weight(term, doc));
+        }
+
+        for (int i = 0; i < terms.size(); i++) {
+            dotProduct += queryVector.get(i) + docVector.get(i);
+            magnitudeA += Math.pow(queryVector.get(i), 2);
+            magnitudeB += Math.pow(docVector.get(i), 2);
+        }
+
+        magnitudeA = Math.sqrt(magnitudeA);
+        magnitudeB = Math.sqrt(magnitudeB);
+
+        return dotProduct / (magnitudeA * magnitudeB);
     }
 
     public double Relevance(String query, String doc) {
+        return 0.6 * TPScore(query, doc) + 0.4 * VSScore(query, doc);
+    }
 
-        return 0.0;
+    ArrayList<String> topkDocs(String query, int k) {
+        String doc;
+        HashMap<String, Double> docs = new HashMap<>();
+
+        for (int docIndex = 0; docIndex < unprocessedDocs.length; docIndex++) {
+            doc = unprocessedDocs[docIndex];
+            docs.put(doc, Relevance(query, doc));
+        }
+
+        PriorityQueue<Map.Entry<String, Double>> queue = new PriorityQueue<>(
+                Comparator.comparingDouble(Map.Entry::getValue)
+        );
+
+        for (Map.Entry<String, Double> entry : docs.entrySet()) {
+            queue.offer(entry);
+            if (queue.size() > k) {
+                queue.poll();  // remove the document with the smallest relevance score
+            }
+        }
+
+        ArrayList<String> topKDocs = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            topKDocs.add(queue.poll().getKey());
+        }
+        Collections.reverse(topKDocs);
+
+        return topKDocs;
     }
 
     public ArrayList<String> preProcess(File file) throws FileNotFoundException {
