@@ -101,7 +101,7 @@ public class PositionalIndex {
 
     public double TPScore(String query, String doc) {
 
-        return 1;
+        return 0.0;
     }
 
     public double VSScore(String query, String doc) {
