@@ -39,23 +39,23 @@ public class Main {
         QUERIES FOR THE REPORT
         run this and put the output into the report
          */
-//        String[] queries = {"had", "dictator be", "missed hat ham", "argued decided in number", "briefcase finite democracies injury of"};
-//        int k = 10;
-//        ArrayList<String> topK;
-//        String doc;
-//        QueryProcessor qp = new QueryProcessor(folder);
-//
-//        for (String q : queries) {
-//            System.out.println("Query: " + q);
-//
-//            topK = qp.topkDocs(q, k);
-//            for (int d = 0; d < topK.size(); d++) {
-//                doc = topK.get(d);
-//                System.out.println((d + 1) + ") " + doc);
-//                System.out.println("TPScore: " + qp.pos.TPScore(q, doc) + ", VSScore: " + qp.pos.VSScore(q, doc) +
-//                        ", Relevance Score: " + qp.pos.Relevance(q, doc));
-//            }
-//            System.out.println("-----------------------------------------------------------------------------\n");
-//        }
+        String[] queries = {"had", "dictator be", "Giants finished Beaneaters", "World Bridegrooms Byrne Dodgers", "Red Ollie Cincinnati Stockings of"};
+        int k = 10;
+        ArrayList<String> topK;
+        String doc;
+        QueryProcessor qp = new QueryProcessor(folder);
+
+        for (String q : queries) {
+            System.out.println("Query: " + q);
+
+            topK = qp.topkDocs(q, k);
+            for (int d = 0; d < topK.size(); d++) {
+                doc = topK.get(d);
+                System.out.println((d + 1) + ") " + doc);
+                System.out.println("TPScore: " + qp.pos.TPScore(q, doc) + ", VSScore: " + qp.pos.VSScore(q, doc) +
+                        ", Relevance Score: " + qp.pos.Relevance(q, doc));
+            }
+            System.out.println("-----------------------------------------------------------------------------\n");
+        }
     }
 }
