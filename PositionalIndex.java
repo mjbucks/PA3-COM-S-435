@@ -239,13 +239,4 @@ public class PositionalIndex {
         query = query.toLowerCase();
         return new ArrayList<>(Arrays.asList(query.split(" ")));
     }
-
-
-    // Please note that this is a simple implementation and may not cover all edge cases.
-    // For example, it does not handle cases where the terms are not found in the document, or where the document is empty.
-    // You may need to add additional error checking depending on your specific requirements.
-    // Also, this method assumes that the document is a single string where words are separated by spaces.
-    // If your document structure is different, you may need to adjust the method accordingly.
-
-
 }

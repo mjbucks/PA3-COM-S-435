@@ -53,7 +53,7 @@ public class Main {
                 doc = topK.get(d);
                 System.out.println((d + 1) + ") " + doc);
                 System.out.println("TPScore: " + qp.pos.TPScore(q, doc) + ", VSScore: " + qp.pos.VSScore(q, doc) +
-                        ", Relevance Score: " + qp.pos.Relevance(q, doc));
+                        ",\n Relevance Score: " + qp.pos.Relevance(q, doc));
             }
             System.out.println("-----------------------------------------------------------------------------\n");
         }
