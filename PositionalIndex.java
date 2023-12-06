@@ -88,10 +88,6 @@ public class PositionalIndex {
                 }
             }
         }
-
-//        if (pos1 == -1 || pos2 == -1) {
-//            return 17;
-//        }
         return Math.min(minDist, 17);
     }
 
