@@ -6,6 +6,7 @@ import java.util.Set;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
+//        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\IR";
 //        String folder = "C:\\Users\\Maxwe\\Downloads\\testFiles\\testFiles";
         PositionalIndex pos = new PositionalIndex(folder);
 
@@ -30,8 +31,7 @@ public class Main {
 //            }
 //            System.out.println(doc + ": " + pos.Relevance(query, doc));
 //        }
-        System.out.println(pos.TPScore("had", "21st_century.txt"));
-    }
+
 
 
     //

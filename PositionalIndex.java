@@ -55,12 +55,6 @@ public class PositionalIndex {
         }
     }
 
-    public int termFrequency(String term, String doc) {
-        doc = doc.toLowerCase();
-        ArrayList<String> words = new ArrayList<>(Arrays.asList(doc.split(" ")));
-        return Collections.frequency(words, term);
-    }
-
     public String postingsList(String t) {
         StringBuilder result = new StringBuilder("[");
         String docName;
@@ -105,6 +99,10 @@ public class PositionalIndex {
         return ((double) qWords.length)/sum;
     }
 
+    public int termFrequency(String term, ArrayList<String> query) {
+        return Collections.frequency(query, term);
+    }
+
     public double VSScore(String query, String doc) {
         ArrayList<Double> queryVector = new ArrayList<>();
         ArrayList<Double> docVector = new ArrayList<>();
@@ -114,13 +112,16 @@ public class PositionalIndex {
         double magnitudeA = 0;
         double magnitudeB = 0;
 
+        query = query.toLowerCase();
+        ArrayList<String> wordsInQuery = new ArrayList<>(Arrays.asList(query.split(" ")));
+
         for (String term : terms) {
-            queryVector.add((double) termFrequency(term, query));
+            queryVector.add((double) Collections.frequency(wordsInQuery, term));
             docVector.add(weight(term, doc));
         }
 
         for (int i = 0; i < terms.size(); i++) {
-            dotProduct += queryVector.get(i) + docVector.get(i);
+            dotProduct += queryVector.get(i) * docVector.get(i);
             magnitudeA += Math.pow(queryVector.get(i), 2);
             magnitudeB += Math.pow(docVector.get(i), 2);
         }
@@ -133,35 +134,6 @@ public class PositionalIndex {
 
     public double Relevance(String query, String doc) {
         return 0.6 * TPScore(query, doc) + 0.4 * VSScore(query, doc);
-    }
-
-    ArrayList<String> topkDocs(String query, int k) {
-        String doc;
-        HashMap<String, Double> docs = new HashMap<>();
-
-        for (int docIndex = 0; docIndex < unprocessedDocs.length; docIndex++) {
-            doc = unprocessedDocs[docIndex];
-            docs.put(doc, Relevance(query, doc));
-        }
-
-        PriorityQueue<Map.Entry<String, Double>> queue = new PriorityQueue<>(
-                Comparator.comparingDouble(Map.Entry::getValue)
-        );
-
-        for (Map.Entry<String, Double> entry : docs.entrySet()) {
-            queue.offer(entry);
-            if (queue.size() > k) {
-                queue.poll();  // remove the document with the smallest relevance score
-            }
-        }
-
-        ArrayList<String> topKDocs = new ArrayList<>();
-        while (!queue.isEmpty()) {
-            topKDocs.add(queue.poll().getKey());
-        }
-        Collections.reverse(topKDocs);
-
-        return topKDocs;
     }
 
     public ArrayList<String> preProcess(File file) throws FileNotFoundException {
