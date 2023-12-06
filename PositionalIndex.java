@@ -55,12 +55,6 @@ public class PositionalIndex {
         }
     }
 
-    public int termFrequency(String term, String doc) {
-        doc = doc.toLowerCase();
-        ArrayList<String> words = new ArrayList<>(Arrays.asList(doc.split(" ")));
-        return Collections.frequency(words, term);
-    }
-
     public String postingsList(String t) {
         StringBuilder result = new StringBuilder("[");
         String docName;
@@ -94,6 +88,10 @@ public class PositionalIndex {
         return 0.0;
     }
 
+    public int termFrequency(String term, ArrayList<String> query) {
+        return Collections.frequency(query, term);
+    }
+
     public double VSScore(String query, String doc) {
         ArrayList<Double> queryVector = new ArrayList<>();
         ArrayList<Double> docVector = new ArrayList<>();
@@ -103,13 +101,16 @@ public class PositionalIndex {
         double magnitudeA = 0;
         double magnitudeB = 0;
 
+        query = query.toLowerCase();
+        ArrayList<String> wordsInQuery = new ArrayList<>(Arrays.asList(query.split(" ")));
+
         for (String term : terms) {
-            queryVector.add((double) termFrequency(term, query));
+            queryVector.add((double) Collections.frequency(wordsInQuery, term));
             docVector.add(weight(term, doc));
         }
 
         for (int i = 0; i < terms.size(); i++) {
-            dotProduct += queryVector.get(i) + docVector.get(i);
+            dotProduct += queryVector.get(i) * docVector.get(i);
             magnitudeA += Math.pow(queryVector.get(i), 2);
             magnitudeB += Math.pow(docVector.get(i), 2);
         }
