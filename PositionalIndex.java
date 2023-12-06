@@ -120,27 +120,46 @@ public class PositionalIndex {
         return Math.sqrt(postings.get(t).get(d).size()) * Math.log((double) N /dictionary.get(t));
     }
 
+    int getIndexOfDoc(String doc) {
+        for (int i = 0; i < unprocessedDocs.length; i++) {
+            if (unprocessedDocs[i].equals(doc)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 
     public double VSScore(String query, String doc) {
         ArrayList<Double> queryVector = new ArrayList<>();
         ArrayList<Double> docVector = new ArrayList<>();
-        Set<String> termsSet = postings.keySet();
-        ArrayList<String> terms = new ArrayList<>(termsSet);
         double dotProduct = 0;
         double magnitudeA = 0;
         double magnitudeB = 0;
+        int termQFq;
 
-        ArrayList<String> termsInQuery = queryPreProcess(query);
+        ArrayList<String> queryTerms = queryPreProcess(query);
 
-        for (String term : terms) {
-            queryVector.add((double) Collections.frequency(termsInQuery, term));
-            docVector.add(weight(term, doc));
+        /*
+        for the dotProduct we just have to compute the terms that appear in both the doc and query as all other
+        computations of terms will be 0. For magnititudeA we just have to look at the the query.
+         */
+        for (String term : queryTerms) {
+            termQFq = Collections.frequency(queryTerms, term);
+            if (postings.get(term) != null && postings.get(term).get(doc) != null) {
+                dotProduct += termQFq * weight(term, doc);
+            }
+            magnitudeA += Math.pow(termQFq, 2);
         }
 
-        for (int i = 0; i < terms.size(); i++) {
-            dotProduct += queryVector.get(i) * docVector.get(i);
-            magnitudeA += Math.pow(queryVector.get(i), 2);
-            magnitudeB += Math.pow(docVector.get(i), 2);
+        /*
+        for magnitiudeB we just have to look at the doc
+         */
+        int docIndex = getIndexOfDoc(doc);
+        Set<String> docTerms = new HashSet<>(docs.get(docIndex));
+
+        for (String term : docTerms) {
+            magnitudeB += Math.pow(weight(term, doc), 2);
         }
 
         magnitudeA = Math.sqrt(magnitudeA);
