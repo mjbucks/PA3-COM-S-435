@@ -31,8 +31,7 @@ public class Main {
 //            }
 //            System.out.println(doc + ": " + pos.Relevance(query, doc));
 //        }
-
-
+        System.out.println(pos.TPScore("Anno Domini", "21st_century.txt"));
         //
     }
 }

@@ -34,27 +34,6 @@ public class PositionalIndex {
 
     }
 
-    public void createPostings() {
-        int docIndex, termIndex;
-        String term, docName;
-
-        for (docIndex = 0; docIndex < docs.size(); docIndex++) {
-            docName = unprocessedDocs[docIndex];
-
-            for (termIndex = 0; termIndex < docs.get(docIndex).size(); termIndex++){
-                term = docs.get(docIndex).get(termIndex);
-                if (postings.get(term) == null){
-                    postings.put(term, new Hashtable<>());
-                    postings.get(term).put(docName, new ArrayList<Integer>());
-                }
-                else if(postings.get(term).get(docName) == null) {
-                    postings.get(term).put(docName, new ArrayList<Integer>());
-                }
-                postings.get(term).get(docName).add(termIndex);
-            }
-        }
-    }
-
     public String postingsList(String t) {
         StringBuilder result = new StringBuilder("[");
         String docName;
@@ -76,6 +55,62 @@ public class PositionalIndex {
         return result.toString();
     }
 
+    // This method returns the distance between two terms in a document[^1^][1]
+    public double distd(String term1, String term2, String doc) {
+        int index = getIndexOfDoc(doc);
+        ArrayList<String> document = docs.get(index);
+        double minDist = Double.MAX_VALUE;
+        int dist;
+
+        // If neither of the terms appear on the document or only one term appear in the document
+        if (postings.get(term1).get(doc) == null || postings.get(term2).get(doc) == null) {
+            return 17;
+        }
+
+        ArrayList<Integer> p = postings.get(term1).get(doc);
+        ArrayList<Integer> r = postings.get(term2).get(doc);
+
+        int l = p.size();
+        int k = r.size();
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < l; j++) {
+                if (r.get(i) > p.get(j)) {
+                    dist = r.get(i) - p.get(j);
+                }
+                else {
+                    dist = 17;
+                }
+
+                if (dist < minDist) {
+                    minDist = dist;
+                }
+            }
+        }
+
+//        if (pos1 == -1 || pos2 == -1) {
+//            return 17;
+//        }
+        return Math.min(minDist, 17);
+    }
+
+    public double TPScore(String query, String doc) {
+
+        ArrayList<String> qWords = queryPreProcess(query);
+        int querySize = qWords.size();
+
+        double sum = 0;
+
+        if (querySize < 2) {
+            sum = 17;
+        }
+
+        for (int l = 0; l < querySize - 1; l++){
+            sum = sum + distd(qWords.get(l), qWords.get(l + 1), doc);
+        }
+
+        return ((double) querySize)/sum;
+    }
+
     public double weight(String t, String d) {
         if (postings.get(t).get(d) == null) {
             return 0;
@@ -83,25 +118,6 @@ public class PositionalIndex {
         return Math.sqrt(postings.get(t).get(d).size()) * Math.log((double) N /dictionary.get(t));
     }
 
-    public double TPScore(String query, String doc) {
-        String[] qWords = query.split(" ");
-
-        if(qWords.length == 0){
-            return 0.0;
-        }
-        
-        double sum = 0;
-        
-        for(int l = 0; l < qWords.length - 1; l++){
-            sum = sum + distd(qWords[l], qWords[l+1], doc);
-        }
-
-        return ((double) qWords.length)/sum;
-    }
-
-    public int termFrequency(String term, ArrayList<String> query) {
-        return Collections.frequency(query, term);
-    }
 
     public double VSScore(String query, String doc) {
         ArrayList<Double> queryVector = new ArrayList<>();
@@ -112,8 +128,7 @@ public class PositionalIndex {
         double magnitudeA = 0;
         double magnitudeB = 0;
 
-        query = query.toLowerCase();
-        ArrayList<String> wordsInQuery = new ArrayList<>(Arrays.asList(query.split(" ")));
+        ArrayList<String> wordsInQuery = queryPreProcess(query);
 
         for (String term : terms) {
             queryVector.add((double) Collections.frequency(wordsInQuery, term));
@@ -182,6 +197,27 @@ public class PositionalIndex {
         return -1;
     }
 
+    public void createPostings() {
+        int docIndex, termIndex;
+        String term, docName;
+
+        for (docIndex = 0; docIndex < docs.size(); docIndex++) {
+            docName = unprocessedDocs[docIndex];
+
+            for (termIndex = 0; termIndex < docs.get(docIndex).size(); termIndex++){
+                term = docs.get(docIndex).get(termIndex);
+                if (postings.get(term) == null){
+                    postings.put(term, new Hashtable<>());
+                    postings.get(term).put(docName, new ArrayList<Integer>());
+                }
+                else if(postings.get(term).get(docName) == null) {
+                    postings.get(term).put(docName, new ArrayList<Integer>());
+                }
+                postings.get(term).get(docName).add(termIndex);
+            }
+        }
+    }
+
     public void fillDictionary() throws FileNotFoundException {
         String key;
         Enumeration<String> e = postings.keys();
@@ -191,31 +227,9 @@ public class PositionalIndex {
         }
     }
 
-
-
-
-    // This method returns the distance between two terms in a document[^1^][1]
-    public double distd(String term1, String term2, String doc) {
-        int index = getIndexOfDoc(doc);
-        ArrayList<String> document = docs.get(index);
-        int pos1 = -1, pos2 = -1;
-        double minDist = Double.MAX_VALUE;
-
-        for (int i = 0; i < document.size(); i++) {
-            if (document.get(i).equals(term1)) {
-                pos1 = i;
-            }
-            if (document.get(i).equals(term2)) {
-                pos2 = i;
-            }
-            if (pos1 != -1 && pos2 != -1 && pos1 <= pos2) {
-                minDist = Math.min(minDist, pos2 - pos1);
-            }
-        }
-        if (pos1 == -1 || pos2 == -1) {
-            return 17;
-        }
-        return Math.min(minDist, 17);
+    public ArrayList<String> queryPreProcess (String query) {
+        query = query.toLowerCase();
+        return new ArrayList<>(Arrays.asList(query.split(" ")));
     }
 
 
