@@ -5,11 +5,12 @@ import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
-//        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\IR";
+//        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
+        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\IR";
 //        String folder = "C:\\Users\\Maxwe\\Downloads\\testFiles\\testFiles";
-        PositionalIndex pos = new PositionalIndex(folder);
-
+//        PositionalIndex pos = new PositionalIndex(folder);
+//        System.out.println(pos.dictionary);
+//        System.out.println(pos.dictionary);
 //        Enumeration<String> keys = pos.dictionary.keys();
 // iterate over the keys
 //        while (keys.hasMoreElements()) {
@@ -31,7 +32,30 @@ public class Main {
 //            }
 //            System.out.println(doc + ": " + pos.Relevance(query, doc));
 //        }
-        System.out.println(pos.TPScore("Anno Domini", "21st_century.txt"));
+//        System.out.println(pos.TPScore("Anno Domini", "21st_century.txt"));
         //
+
+        /*
+        QUERIES FOR THE REPORT
+        run this and put the output into the report
+         */
+//        String[] queries = {"had", "dictator be", "missed hat ham", "argued decided in number", "briefcase finite democracies injury of"};
+//        int k = 10;
+//        ArrayList<String> topK;
+//        String doc;
+//        QueryProcessor qp = new QueryProcessor(folder);
+//
+//        for (String q : queries) {
+//            System.out.println("Query: " + q);
+//
+//            topK = qp.topkDocs(q, k);
+//            for (int d = 0; d < topK.size(); d++) {
+//                doc = topK.get(d);
+//                System.out.println((d + 1) + ") " + doc);
+//                System.out.println("TPScore: " + qp.pos.TPScore(q, doc) + ", VSScore: " + qp.pos.VSScore(q, doc) +
+//                        ", Relevance Score: " + qp.pos.Relevance(q, doc));
+//            }
+//            System.out.println("-----------------------------------------------------------------------------\n");
+//        }
     }
 }

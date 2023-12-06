@@ -57,13 +57,15 @@ public class PositionalIndex {
 
     // This method returns the distance between two terms in a document[^1^][1]
     public double distd(String term1, String term2, String doc) {
-        int index = getIndexOfDoc(doc);
-        ArrayList<String> document = docs.get(index);
         double minDist = Double.MAX_VALUE;
         int dist;
 
-        // If neither of the terms appear on the document or only one term appear in the document
-        if (postings.get(term1).get(doc) == null || postings.get(term2).get(doc) == null) {
+        /*
+         If neither of the terms appear on the document or only one term appear in the document
+         or if the terms don't exist in any docs
+        */
+        if (postings.get(term1) == null || postings.get(term2) == null ||
+                postings.get(term1).get(doc) == null || postings.get(term2).get(doc) == null) {
             return 17;
         }
 
@@ -100,8 +102,8 @@ public class PositionalIndex {
 
         double sum = 0;
 
-        if (querySize < 2) {
-            sum = 17;
+        if (querySize <= 1) {
+            return 0.0;
         }
 
         for (int l = 0; l < querySize - 1; l++){
@@ -128,10 +130,10 @@ public class PositionalIndex {
         double magnitudeA = 0;
         double magnitudeB = 0;
 
-        ArrayList<String> wordsInQuery = queryPreProcess(query);
+        ArrayList<String> termsInQuery = queryPreProcess(query);
 
         for (String term : terms) {
-            queryVector.add((double) Collections.frequency(wordsInQuery, term));
+            queryVector.add((double) Collections.frequency(termsInQuery, term));
             docVector.add(weight(term, doc));
         }
 
@@ -186,15 +188,6 @@ public class PositionalIndex {
             System.err.println("An I/O error occurred: " + e.getMessage());
         }
         return null;
-    }
-
-    public int getIndexOfDoc(String doc) {
-        for (int i = 0; i < unprocessedDocs.length; i++) {
-            if (unprocessedDocs[i].equals(doc)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     public void createPostings() {
