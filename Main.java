@@ -18,19 +18,19 @@ public class Main {
 //            System.out.println("Eric noob");
 //            System.out.println(key + ": " + pos.dictionary.get(key).toString());
 //        }
-        String query = "come had major league tracks";
-        ArrayList<String> docs = pos.topkDocs(query, 5);
-        System.out.println(docs);
-        String doc;
-//        System.out.println(pos.dictionary);
-        for (int i = 0; i < pos.unprocessedDocs.length; i++) {
-            doc = pos.unprocessedDocs[i];
-            if (docs.contains(doc)) {
-                System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!  ");
-            }
-            System.out.println(doc + ": " + pos.Relevance(query, doc));
-        }
-
+//        String query = "come had major league tracks";
+//        ArrayList<String> docs = pos.topkDocs(query, 5);
+//        System.out.println(docs);
+//        String doc;
+////        System.out.println(pos.dictionary);
+//        for (int i = 0; i < pos.unprocessedDocs.length; i++) {
+//            doc = pos.unprocessedDocs[i];
+//            if (docs.contains(doc)) {
+//                System.out.print("!!!!!!!!!!!!!!!!!!!!!!!!!!  ");
+//            }
+//            System.out.println(doc + ": " + pos.Relevance(query, doc));
+//        }
+        System.out.println(pos.TPScore("had", "21st_century.txt"));
     }
 
 
