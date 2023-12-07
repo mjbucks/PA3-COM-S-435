@@ -237,4 +237,12 @@ public class PositionalIndex {
         query = query.toLowerCase();
         return new ArrayList<>(Arrays.asList(query.split(" ")));
     }
+
+    public int termFrequency(String term, String Doc) {
+        if (postings.get(term) != null && postings.get(term).get(Doc) != null) {
+            return postings.get(term).get(Doc).size();
+        }
+
+        return 0;
+    }
 }
