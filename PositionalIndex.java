@@ -245,4 +245,11 @@ public class PositionalIndex {
 
         return 0;
     }
+
+    public int docFrequency(String term) {
+        if (postings.get(term) != null) {
+            return postings.get(term).size();
+        }
+        return 0;
+    }
 }
