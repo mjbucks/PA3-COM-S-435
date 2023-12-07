@@ -8,7 +8,7 @@ public class QueryProcessor {
         pos = new PositionalIndex(folder);
     }
 
-    ArrayList<String> topkDocs(String query, int k) {
+    ArrayList<String> topKDocs(String query, int k) {
         String doc;
         HashMap<String, Double> docs = new HashMap<>();
 

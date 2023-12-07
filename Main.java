@@ -5,8 +5,8 @@ import java.util.Set;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
-//        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
-        String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\IR";
+//       String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
+         String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\IR";
 //        String folder = "C:\\Users\\Maxwe\\Downloads\\testFiles\\testFiles";
 //        PositionalIndex pos = new PositionalIndex(folder);
 //        System.out.println(pos.dictionary);
@@ -39,7 +39,7 @@ public class Main {
         QUERIES FOR THE REPORT
         run this and put the output into the report
          */
-        String[] queries = {"had", "dictator be", "Giants finished Beaneaters", "World Bridegrooms Byrne Dodgers", "Red Ollie Cincinnati Stockings of"};
+        String[] queries = {"games", "Rules of Official Baseball the", ""};
         int k = 10;
         ArrayList<String> topK;
         String doc;
@@ -48,7 +48,7 @@ public class Main {
         for (String q : queries) {
             System.out.println("Query: " + q);
 
-            topK = qp.topkDocs(q, k);
+            topK = qp.topKDocs(q, k);
             for (int d = 0; d < topK.size(); d++) {
                 doc = topK.get(d);
                 System.out.println((d + 1) + ") " + doc);
