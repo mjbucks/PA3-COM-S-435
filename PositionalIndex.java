@@ -127,8 +127,6 @@ public class PositionalIndex {
     }
 
     public double VSScore(String query, String doc) {
-        ArrayList<Double> queryVector = new ArrayList<>();
-        ArrayList<Double> docVector = new ArrayList<>();
         double dotProduct = 0;
         double magnitudeA = 0;
         double magnitudeB = 0;
