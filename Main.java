@@ -6,8 +6,10 @@ import java.util.Set;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
 //       String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\testFiles";
-         String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\IR";
+         // String folder = "C:\\Users\\hedgr_v6euno5\\OneDrive\\ISU Fall23\\COM S 435\\PA3\\IR";
 //        String folder = "C:\\Users\\Maxwe\\Downloads\\testFiles\\testFiles";
+        String folder = "C:\\Users\\Maxwe\\Downloads\\IR\\IR";
+
 //        PositionalIndex pos = new PositionalIndex(folder);
 //        System.out.println(pos.dictionary);
 //        System.out.println(pos.dictionary);
@@ -39,7 +41,7 @@ public class Main {
         QUERIES FOR THE REPORT
         run this and put the output into the report
          */
-        String[] queries = {"games", "Rules of Official Baseball the", ""};
+        String[] queries = {"games"};
         int k = 10;
         ArrayList<String> topK;
         String doc;
